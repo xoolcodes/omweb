@@ -56,6 +56,7 @@
       text-decoration: none;
       border-radius: 4px;
       transition: background 0.3s ease;
+      margin: 10px;
     }
     .button:hover {
       background: #444;
@@ -67,23 +68,33 @@
       font-size: 0.9em;
       color: #555;
     }
+    .links {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <header>
     <h1>OptiMaxcs</h1>
     <nav>
-      <a href="#">Home</a>
-      <a href="#">About</a>
-      <a href="#">Services</a>
-      <a href="#">Contact</a>
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
     </nav>
   </header>
   <main>
-    <h2>Welcome to OptiMaxcs</h2>
+    <h2 id="about">Welcome to OptiMaxcs</h2>
     <p>OptiMaxcs is dedicated to delivering streamlined solutions with a minimalist approach. 
        We believe in clarity, efficiency, and design that speaks for itself.</p>
-    <a href="#" class="button">Learn More</a>
+    <h2 id="services">Our Services</h2>
+    <p>We provide consulting, design, and development services tailored to your needs. 
+       Our focus is on creating simple, effective solutions that maximize impact.</p>
+    <h2 id="contact">Connect With Us</h2>
+    <p>Follow our work and stay updated through our platforms.</p>
+    <div class="links">
+      <a href="https://github.com/" target="_blank" class="button">GitHub</a>
+      <a href="https://youtube.com/" target="_blank" class="button">YouTube</a>
+    </div>
   </main>
   <footer>
     <p>&copy; 2026 OptiMaxcs. All rights reserved.</p>
