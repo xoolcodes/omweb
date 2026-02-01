@@ -9,12 +9,9 @@
       font-family: "Helvetica Neue", Arial, sans-serif;
       background: #ffffff;
       color: #222;
-      line-height: 1.6;
     }
 
     header {
-      background: #ffffff;
-      color: #111;
       padding: 50px 20px;
       text-align: center;
       border-bottom: 2px solid #eaeaea;
@@ -43,70 +40,6 @@
       border-top: 2px solid #eaeaea;
     }
 
-    
-
-    #chatbot {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 320px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.2);
-      display: none;
-      flex-direction: column;
-      overflow: hidden;
-      z-index: 9999;
-    }
-
-    #chatbot-header {
-      background: #111;
-      color: #fff;
-      padding: 12px;
-      font-weight: bold;
-      text-align: center;
-    }
-
-    #chatbot-messages {
-      padding: 10px;
-      height: 260px;
-      overflow-y: auto;
-      font-size: 0.9em;
-    }
-
-    .msg {
-      margin-bottom: 10px;
-    }
-
-    .bot {
-      color: #111;
-    }
-
-    .user {
-      color: #555;
-      text-align: right;
-    }
-
-    #chatbot-input {
-      display: flex;
-      border-top: 1px solid #ddd;
-    }
-
-    #chatbot-input input {
-      flex: 1;
-      padding: 10px;
-      border: none;
-      outline: none;
-    }
-
-    #chatbot-input button {
-      background: #111;
-      color: #fff;
-      border: none;
-      padding: 10px 15px;
-      cursor: pointer;
-    }
-
     #chat-toggle {
       position: fixed;
       bottom: 20px;
@@ -117,14 +50,122 @@
       border-radius: 50%;
       cursor: pointer;
       font-size: 18px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.3);
       z-index: 9998;
     }
 
+    #chatbot {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 340px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 9999;
+    }
+
+    #chatbot-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #111;
+      color: #fff;
+      padding: 12px;
+      font-weight: bold;
+    }
+
+    #chatbot-header img {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    #chatbot-messages {
+      padding: 12px;
+      height: 280px;
+      overflow-y: auto;
+      background: #f6f6f6;
+    }
+
+    .bubble {
+      max-width: 80%;
+      padding: 10px 12px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      line-height: 1.4;
+      font-size: 0.9em;
+      word-wrap: break-word;
+    }
+
+    .bot {
+      background: #fff;
+      color: #111;
+      border-top-left-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .user {
+      background: #111;
+      color: #fff;
+      margin-left: auto;
+      border-top-right-radius: 4px;
+    }
+
+    .typing {
+      display: flex;
+      gap: 4px;
+      padding: 10px 12px;
+      background: #fff;
+      border-radius: 16px;
+      width: fit-content;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .typing span {
+      width: 6px;
+      height: 6px;
+      background: #999;
+      border-radius: 50%;
+      animation: blink 1.4s infinite both;
+    }
+
+    .typing span:nth-child(2) { animation-delay: .2s; }
+    .typing span:nth-child(3) { animation-delay: .4s; }
+
+    @keyframes blink {
+      0% { opacity: .2; }
+      20% { opacity: 1; }
+      100% { opacity: .2; }
+    }
+
+    #chatbot-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    #chatbot-input input {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      outline: none;
+    }
+
+    #chatbot-input button {
+      background: #111;
+      color: #fff;
+      border: none;
+      padding: 0 16px;
+      cursor: pointer;
+    }
+
     .warning {
-      color: #c0392b;
-      font-size: 0.85em;
       text-align: center;
+      font-size: 0.8em;
+      color: #c0392b;
+      margin: 8px 0;
     }
   </style>
 </head>
@@ -143,11 +184,13 @@
   <p>OptiMaxcs</p>
 </footer>
 
-
 <div id="chat-toggle">💬</div>
 
 <div id="chatbot">
-  <div id="chatbot-header">OptiMaxcs Support</div>
+  <div id="chatbot-header">
+    <img src="pfp.png" alt="Support">
+    OptiMaxcs Support
+  </div>
   <div id="chatbot-messages"></div>
   <div id="chatbot-input">
     <input id="chat-input" placeholder="Type here..." />
@@ -159,6 +202,7 @@
 const API = "/api";
 let sessionId = null;
 let userName = null;
+let typingBubble = null;
 
 const chat = document.getElementById("chatbot");
 const messages = document.getElementById("chatbot-messages");
@@ -168,19 +212,32 @@ document.getElementById("chat-toggle").onclick = () => {
   chat.style.display = chat.style.display === "flex" ? "none" : "flex";
 };
 
-function addMessage(text, cls) {
+function addBubble(text, cls) {
   const div = document.createElement("div");
-  div.className = "msg " + cls;
+  div.className = "bubble " + cls;
   div.innerText = text;
   messages.appendChild(div);
   messages.scrollTop = messages.scrollHeight;
+}
+
+function showTyping() {
+  typingBubble = document.createElement("div");
+  typingBubble.className = "typing";
+  typingBubble.innerHTML = "<span></span><span></span><span></span>";
+  messages.appendChild(typingBubble);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function hideTyping() {
+  if (typingBubble) typingBubble.remove();
+  typingBubble = null;
 }
 
 async function startSession() {
   const res = await fetch(API + "/start", { method: "POST" });
   const data = await res.json();
   sessionId = data.session_id;
-  addMessage(data.message, "bot");
+  addBubble(data.message, "bot");
 }
 
 async function sendMessage() {
@@ -188,13 +245,19 @@ async function sendMessage() {
   if (!text) return;
   input.value = "";
 
-  addMessage(text, "user");
+  addBubble(text, "user");
 
   if (!userName) {
     userName = text;
-    addMessage(`Nice to meet you ${userName}! How can I help?`, "bot");
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addBubble(`Nice to meet you ${userName}! How can I help?`, "bot");
+    }, 900);
     return;
   }
+
+  showTyping();
 
   const res = await fetch(API + "/support", {
     method: "POST",
@@ -207,7 +270,8 @@ async function sendMessage() {
   });
 
   const data = await res.json();
-  addMessage(data.response, "bot");
+  hideTyping();
+  addBubble(data.response, "bot");
 
   if (data.warning) {
     const w = document.createElement("div");
