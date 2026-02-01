@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/api/*"
+  to = "http://gn1.averntech.co.uk:6205/:splat"
+  status = 200
+  force = true
