@@ -31,6 +31,17 @@
       text-align: center;
     }
 
+    .links a {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 22px;
+      background: #111;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: bold;
+    }
+
     footer {
       background: #f9f9f9;
       text-align: center;
@@ -95,16 +106,13 @@
       padding: 10px 12px;
       border-radius: 16px;
       margin-bottom: 10px;
-      line-height: 1.4;
       font-size: 0.9em;
-      word-wrap: break-word;
     }
 
     .bot {
       background: #fff;
       color: #111;
       border-top-left-radius: 4px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     .user {
@@ -120,8 +128,6 @@
       padding: 10px 12px;
       background: #fff;
       border-radius: 16px;
-      width: fit-content;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     .typing span {
@@ -178,6 +184,10 @@
 <main>
   <h2>Optimising for free</h2>
   <p>OptiMaxcs is upcoming software what will give all intel mac users more power.</p>
+  <div class="links">
+    <a href="https://github.com/notready" target="_blank">GitHub</a>
+    <a href="https://www.youtube.com/@OptiMacxs" target="_blank">YouTube</a>
+  </div>
 </main>
 
 <footer>
@@ -189,7 +199,7 @@
 <div id="chatbot">
   <div id="chatbot-header">
     <img src="pfp.png" alt="Support">
-    OptiMaxcs Support
+    OptiMaxcs Support (Early Beta)
   </div>
   <div id="chatbot-messages"></div>
   <div id="chatbot-input">
@@ -225,7 +235,6 @@ function showTyping() {
   typingBubble.className = "typing";
   typingBubble.innerHTML = "<span></span><span></span><span></span>";
   messages.appendChild(typingBubble);
-  messages.scrollTop = messages.scrollHeight;
 }
 
 function hideTyping() {
@@ -237,6 +246,7 @@ async function startSession() {
   const res = await fetch(API + "/start", { method: "POST" });
   const data = await res.json();
   sessionId = data.session_id;
+  addBubble("Hi! I’m the OptiMaxcs support assistant. I’m currently in early beta.", "bot");
   addBubble(data.message, "bot");
 }
 
